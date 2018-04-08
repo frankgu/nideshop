@@ -3,7 +3,9 @@
   "description": "nideshop - open source mini program shop",
   "version": "1.0.0",
   "scripts": {
-    "start": "node development.js",
+    "start": "pm2 start pm2.json",
+    "dev": "node dnpm evelopment.js",
+    "initdb": "npm install && node src/tools/initdb.js",
     "compile": "babel --no-babelrc src/ --presets think-node --out-dir app/",
     "lint": "eslint src/",
     "lint-fix": "eslint --fix src/"
@@ -12,6 +14,7 @@
     "gm": "^1.23.0",
     "jsonwebtoken": "^8.0.0",
     "kcors": "^2.2.1",
+    "knex": "^0.13.0",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
     "moment": "^2.18.1",
@@ -24,7 +27,8 @@
     "think-model-mysql": "^1.0.0",
     "thinkjs": "^3.0.0",
     "weixinpay": "^1.0.12",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "wafer-node-sdk": "^1.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
