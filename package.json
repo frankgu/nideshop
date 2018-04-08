@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "pm2 start pm2.json",
-    "dev": "node dnpm evelopment.js",
+    "dev": "node development.js",
     "initdb": "npm install && node src/tools/initdb.js",
     "compile": "babel --no-babelrc src/ --presets think-node --out-dir app/",
     "lint": "eslint src/",
@@ -27,8 +27,7 @@
     "think-model-mysql": "^1.0.0",
     "thinkjs": "^3.0.0",
     "weixinpay": "^1.0.12",
-    "xml2js": "^0.4.19",
-    "wafer-node-sdk": "^1.1.1"
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

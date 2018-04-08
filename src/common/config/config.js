@@ -13,18 +13,5 @@ module.exports = {
     appid: '', // 对应快递鸟用户后台 用户ID
     appkey: '', // 对应快递鸟用户后台 API key
     request_url: 'http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx'
-  },
-  // COS 配置，用于上传模块使用
-  cos: {
-    /**
-     * 区域
-     * 华北：cn-north
-     * 华东：cn-east
-     * 华南：cn-south
-     * 西南：cn-southwest
-     */
-    region: 'ap-guangzhou',
-    fileBucket: 'qcloudtest',               
-    uploadFolder: ''                      
   }
 };
