@@ -7,7 +7,7 @@ module.exports = {
   encoding: 'utf8mb4',
   host: 'localhost',
   port: 3306,
-  user: 'root',
+  user: 'miniprogram',
   password: 'wx6ad21b55baf297fc',
   dateStrings: true
 };
