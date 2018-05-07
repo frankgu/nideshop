@@ -8,7 +8,7 @@ module.exports = class extends Base {
     const userInfo = fullUserInfo.userInfo;
     const clientIp = ''; // 暂时不记录 ip
 
-    // 获取openid
+    // Get the openid from wechat
     const options = {
       method: 'GET',
       url: 'https://api.weixin.qq.com/sns/jscode2session',
@@ -26,26 +26,26 @@ module.exports = class extends Base {
       return this.fail('登录失败');
     }
 
-    // 验证用户信息完整性
+    // Verify the completeness of the user
     const crypto = require('crypto');
     const sha1 = crypto.createHash('sha1').update(fullUserInfo.rawData + sessionData.session_key).digest('hex');
     if (fullUserInfo.signature !== sha1) {
       return this.fail('登录失败');
     }
 
-    // 解释用户数据
+    // Decrypt the user data
     const WeixinSerivce = this.service('weixin', 'api');
     const weixinUserInfo = await WeixinSerivce.decryptUserInfoData(sessionData.session_key, fullUserInfo.encryptedData, fullUserInfo.iv);
     if (think.isEmpty(weixinUserInfo)) {
       return this.fail('登录失败');
     }
 
-    // 根据openid查找用户是否已经注册
-    let userId = await this.model('user').where({ weixin_openid: sessionData.openid }).getField('id', true);
+    // User the openid from wechat to check if the user has been registered in our system
+    let userId = await this.model('user').where({weixin_openid: sessionData.openid}).getField('id', true);
     if (think.isEmpty(userId)) {
-      // 注册
+      // Register the user in our system
       userId = await this.model('user').add({
-        username: '微信用户' + think.uuid(6),
+        username: 'wechat_user' + think.uuid(6),
         password: sessionData.openid,
         register_time: parseInt(new Date().getTime() / 1000),
         register_ip: clientIp,
@@ -54,18 +54,19 @@ module.exports = class extends Base {
         mobile: '',
         weixin_openid: sessionData.openid,
         avatar: userInfo.avatarUrl || '',
-        gender: userInfo.gender || 1, // 性别 0：未知、1：男、2：女
+        gender: userInfo.gender || 1, // gender( 0：unknown, 1：male, 2：female)
         nickname: userInfo.nickName
       });
     }
-
     sessionData.user_id = userId;
 
-    // 查询用户信息
-    const newUserInfo = await this.model('user').field(['id', 'username', 'nickname', 'gender', 'avatar', 'birthday']).where({ id: userId }).find();
+    // Get the user information
+    const newUserInfo = await this.model('user').field(['id', 'username', 'nickname', 'gender', 'avatar', 'birthday', 'user_level_id']).where({id: userId}).find();
+    const newUserLevel = await this.model('user_level').field(['name']).where({id: newUserInfo.user_level_id}).find();
+    newUserInfo['user_level_name'] = newUserLevel.name;
 
-    // 更新登录信息
-    userId = await this.model('user').where({ id: userId }).update({
+    // Update the login info
+    userId = await this.model('user').where({id: userId}).update({
       last_login_time: parseInt(new Date().getTime() / 1000),
       last_login_ip: clientIp
     });
@@ -77,7 +78,26 @@ module.exports = class extends Base {
       return this.fail('登录失败');
     }
 
-    return this.success({ token: sessionKey, userInfo: newUserInfo });
+    return this.success({token: sessionKey, userInfo: newUserInfo});
+  }
+
+  async authCosAction() {
+    const method = this.get('method');
+    const pathName = this.get('pathName');
+    const COSService = this.service('cos', 'api');
+    const cosTempKeys = await COSService.getTempKeys();
+    if (cosTempKeys instanceof Error) {
+      return this.fail(cosTempKeys);
+    }
+    const authorization = await COSService.getAuthorization(cosTempKeys, method, pathName);
+
+    const data = {
+      Authorization: authorization,
+      XCosSecurityToken: cosTempKeys['credentials'] && cosTempKeys['credentials']['sessionToken']
+    };
+
+    // Set the header information
+    return this.success(data);
   }
 
   async logoutAction() {

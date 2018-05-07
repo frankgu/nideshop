@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
-const secret = 'SLDLKKDS323ssdd@#@@gf';
+const config = require('../../common/config/config');
+const secret = config.token;
 
 module.exports = class extends think.Service {
   /**
-   * 根据header中的X-Nideshop-Token值获取用户id
+   * Get user id from header[X-Nideshop-Token]
    */
   async getUserId() {
     const token = think.token;
@@ -20,7 +21,7 @@ module.exports = class extends think.Service {
   }
 
   /**
-   * 根据值获取用户信息
+   * Get user information
    */
   async getUserInfo() {
     const userId = await this.getUserId();

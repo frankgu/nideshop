@@ -41,6 +41,5 @@ module.exports = [
       defaultAction: 'index'
     }
   },
-  'logic',
   'controller'
 ];

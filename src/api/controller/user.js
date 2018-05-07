@@ -10,7 +10,7 @@ module.exports = class extends Base {
   }
 
   /**
-   * 保存用户头像
+   * Save the user avatar
    * @returns {Promise.<void>}
    */
   async saveAvatarAction() {

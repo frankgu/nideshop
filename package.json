@@ -4,7 +4,7 @@
   "description": "nideshop - open source mini program shop",
   "version": "1.0.0",
   "scripts": {
-    "start": "pm2 start pm2.json",
+    "start": "NODE_PORT=8360 pm2 start pm2.json",
     "stop": "pm2 stop pm2.json",
     "dev": "node development.js",
     "initdb": "npm install && node src/tools/initdb.js",
@@ -13,6 +13,7 @@
     "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.3.10",
     "gm": "^1.23.0",
     "jsonwebtoken": "^8.0.0",
     "kcors": "^2.2.1",
